@@ -22,4 +22,6 @@ public class PointPolicy extends BaseTimeEntity {
     @Column(name = "setting_value", nullable = false)
     private String settingValue;
 
+    private String description;
+
 }
