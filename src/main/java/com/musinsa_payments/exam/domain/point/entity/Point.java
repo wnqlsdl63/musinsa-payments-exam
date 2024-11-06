@@ -1,5 +1,7 @@
 package com.musinsa_payments.exam.domain.point.entity;
 
+import com.musinsa_payments.exam.common.util.PointUtils;
+import com.musinsa_payments.exam.domain.point.dto.PointAccumulateRequestDto;
 import com.musinsa_payments.exam.domain.point.dto.PointDto;
 import com.musinsa_payments.exam.domain.point.enums.PointStatus;
 import jakarta.persistence.*;
@@ -49,13 +51,22 @@ public class Point {
         this.createdDate = LocalDateTime.now();
     }
 
-    public static Point createPoint(Long userId, Integer amount, String orderId, PointStatus status, LocalDateTime expireDate) {
+    public static Point createAccumulatePoint(PointAccumulateRequestDto dto, PointStatus status) {
         return Point.builder()
-                .userId(userId)
-                .point(amount)
-                .orderId(orderId)
+                .userId(dto.userId())
+                .point(dto.amount())
+                .orderId(dto.orderId())
                 .status(status)
-                .expireDate(expireDate)
+                .expireDate(dto.getExpireDateOrDefault())
+                .build();
+    }
+
+    public static Point createAccumlateCanclePoint(Point point, PointStatus status) {
+        return Point.builder()
+                .userId(point.getUserId())
+                .point(PointUtils.reverseSign(point.getPoint()))
+                .orderId(point.getOrderId())
+                .status(status)
                 .build();
     }
 

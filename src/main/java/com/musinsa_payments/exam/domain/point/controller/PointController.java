@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class PointController {
     private final PointService pointService;
 
-    @PostMapping("/points")
+    @PostMapping("/points/accumulate")
     public ResponseEntity<ApiResponse<PointDto>> accumulatePoint(@Valid @RequestBody PointAccumulateRequestDto request) {
-        return ApiResponse.ok(pointService.accumulatePoints(request, false));
+        return ApiResponse.ok(pointService.accumulatePoint(request, false));
     }
 
     @PostMapping("/admin/points")
     public ResponseEntity<ApiResponse<PointDto>> accumulatePointsManually(@Valid @RequestBody PointAccumulateRequestDto request) {
-        return ApiResponse.ok(pointService.accumulatePoints(request, true));
+        return ApiResponse.ok(pointService.accumulatePoint(request, true));
     }
 
     @PostMapping("/points/{pointId}/cancel")

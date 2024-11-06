@@ -1,5 +1,6 @@
 package com.musinsa_payments.exam.domain.point.entity;
 
+import com.musinsa_payments.exam.common.util.PointUtils;
 import com.musinsa_payments.exam.domain.point.enums.PointStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -43,11 +44,20 @@ public class PointDetail {
         this.createdDate = LocalDateTime.now();
     }
 
-    public static PointDetail createPointDetail(Point point, Long detailPointId, Integer amount, PointStatus status) {
+    public static PointDetail createAccumulatePointDetail(Point point, Integer amount, PointStatus status) {
         return PointDetail.builder()
                 .point(point)
-                .detailPointId(detailPointId)
+                .detailPointId(point.getId())
                 .amount(amount)
+                .status(status)
+                .build();
+    }
+
+    public static PointDetail createAccumulateCacnelPointDetail(Point point, Point originPoint,PointStatus status) {
+        return PointDetail.builder()
+                .point(point)
+                .detailPointId(originPoint.getId())
+                .amount(PointUtils.reverseSign(originPoint.getPoint()))
                 .status(status)
                 .build();
     }
