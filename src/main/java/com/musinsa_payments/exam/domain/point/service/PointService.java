@@ -20,23 +20,26 @@ public class PointService {
     private final PointValidator pointValidator;
 
     @Transactional
-    public PointDto accumulatePoints(PointAccumulateRequestDto request) {
+    public PointDto accumulatePoints(PointAccumulateRequestDto request, Boolean isManual) {
 
         // 유효성 검사
         pointValidator.validateAccumulatePoints(request.userId(), request.amount());
+
+        // 관리자 여부에 따라 PointStatus 설정
+        PointStatus pointStatus = isManual ? PointStatus.ADMIN_ACCUMULATED : PointStatus.ACCUMULATED;
 
         // 포인트 적립 정보 저장
         Point point = Point.createPoint(
                 request.userId(),
                 request.amount(),
                 request.orderId(),
-                PointStatus.ACCUMULATED,
+                pointStatus,
                 request.getExpireDateOrDefault()
         );
         pointsRepository.save(point);
 
         // PointDetail 생성 및 저장
-        PointDetail pointDetail = PointDetail.createPointDetail(point, request.amount(), PointStatus.ACCUMULATED);
+        PointDetail pointDetail = PointDetail.createPointDetail(point, request.amount(), pointStatus);
         pointDetailRepository.save(pointDetail);
 
         return point.toDto();

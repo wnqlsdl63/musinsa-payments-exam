@@ -23,6 +23,12 @@ public class PointController {
     @PostMapping("/points")
     public ResponseEntity<ApiResponse<PointDto>> accumulatePoint(@Valid @RequestBody PointAccumulateRequestDto request) {
         log.info("accumulatePoint request: {}", request);
-        return ApiResponse.ok(pointService.accumulatePoints(request));
+        return ApiResponse.ok(pointService.accumulatePoints(request, false));
+    }
+
+    @PostMapping("/admin/points")
+    public ResponseEntity<ApiResponse<PointDto>> accumulatePointsManually(@Valid @RequestBody PointAccumulateRequestDto request) {
+        log.info("accumulatePoint request: {}", request);
+        return ApiResponse.ok(pointService.accumulatePoints(request, true));
     }
 }
