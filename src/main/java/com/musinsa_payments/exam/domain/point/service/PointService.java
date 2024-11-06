@@ -1,5 +1,6 @@
 package com.musinsa_payments.exam.domain.point.service;
 
+import com.musinsa_payments.exam.common.util.PointUtils;
 import com.musinsa_payments.exam.domain.point.dto.PointAccumulateRequestDto;
 import com.musinsa_payments.exam.domain.point.dto.PointDto;
 import com.musinsa_payments.exam.domain.point.entity.Point;
@@ -22,7 +23,7 @@ public class PointService {
     @Transactional
     public PointDto accumulatePoints(PointAccumulateRequestDto request, Boolean isManual) {
 
-        // 유효성 검사
+        // 포인트 적립 유효성 검사
         pointValidator.validateAccumulatePoints(request.userId(), request.amount());
 
         // 관리자 여부에 따라 PointStatus 설정
@@ -50,21 +51,27 @@ public class PointService {
         Point originPoint = pointsRepository.findById(pointId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 포인트가 존재하지 않습니다."));
 
+        // 포인트 적립 취소 유효성 검사
         pointValidator.validateCancelAccumulatePoint(pointId);
 
-        // 취소 포인트 생성 (amount를 마이너스로 설정)
+        // 취소 포인트 생성
         Point cancelPoint = Point.createPoint(
                 originPoint.getUserId(),
-                -originPoint.getPoint(),  // 기존 적립 금액을 마이너스로 설정
+                PointUtils.reverseSign(originPoint.getPoint()),
                 originPoint.getOrderId(),
                 PointStatus.ACCUMULATION_CANCELLED,
                 null
         );
         pointsRepository.save(cancelPoint);
 
-        // 취소에 대한 PointDetail 생성 및 저장
-        PointDetail pointDetail = PointDetail.createPointDetail(cancelPoint, originPoint.getId(), -originPoint.getPoint(), PointStatus.ACCUMULATION_CANCELLED);
-        pointDetailRepository.save(pointDetail);
+        // 취소에 대한 PointDetail 생성
+        PointDetail cancelPointDetail = PointDetail.createPointDetail(
+                cancelPoint,
+                originPoint.getId(),
+                PointUtils.reverseSign(originPoint.getPoint()),
+                PointStatus.ACCUMULATION_CANCELLED
+        );
+        pointDetailRepository.save(cancelPointDetail);
 
         return cancelPoint.toDto();
     }
