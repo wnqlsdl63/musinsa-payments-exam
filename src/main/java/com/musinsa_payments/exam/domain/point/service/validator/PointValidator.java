@@ -1,6 +1,8 @@
 package com.musinsa_payments.exam.domain.point.service.validator;
 
 import com.musinsa_payments.exam.common.exception.ValidationException;
+import com.musinsa_payments.exam.domain.point.enums.PointStatus;
+import com.musinsa_payments.exam.domain.point.repository.PointDetailRepository;
 import com.musinsa_payments.exam.domain.point.repository.PointRepository;
 import com.musinsa_payments.exam.domain.policy.entity.UserPointPolicy;
 import com.musinsa_payments.exam.domain.policy.repository.UserPointPolicyRepository;
@@ -16,6 +18,8 @@ import static com.musinsa_payments.exam.common.constant.PointPolicyConstant.DEFA
 public class PointValidator {
     private final UserPointPolicyRepository userPointPoliciesRepository;
     private final PointRepository pointsRepository;
+    private final PointDetailRepository pointDetailRepository;
+
 
 
     /**
@@ -45,6 +49,23 @@ public class PointValidator {
 
         if (newTotalPoints > maxPointsLimit) {
             throw new ValidationException("최대 보유 가능한 포인트 한도를 초과할 수 없습니다.");
+        }
+    }
+
+
+    /**
+     * 특정 적립 포인트가 사용된 적이 있는지 확인하여, 사용된 적이 있다면 적립 취소할 수 없도록 검증합니다.
+     *
+     * @param pointId 취소하려는 적립 포인트 ID
+     * @throws ValidationException 적립된 포인트가 사용된 경우 예외 발생
+     */
+    public void validateCancelAccumulatePoint(Long pointId) {
+        log.debug("[validateCancelAccumulatePoint] pointId: {}", pointId);
+
+        boolean isPointUsed = pointDetailRepository.existsByDetailPointIdAndStatus(pointId, PointStatus.USED);
+
+        if (isPointUsed) {
+            throw new ValidationException("적립된 포인트가 사용된 경우 취소할 수 없습니다.");
         }
     }
 }

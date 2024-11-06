@@ -8,10 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -22,13 +19,18 @@ public class PointController {
 
     @PostMapping("/points")
     public ResponseEntity<ApiResponse<PointDto>> accumulatePoint(@Valid @RequestBody PointAccumulateRequestDto request) {
-        log.info("accumulatePoint request: {}", request);
         return ApiResponse.ok(pointService.accumulatePoints(request, false));
     }
 
     @PostMapping("/admin/points")
     public ResponseEntity<ApiResponse<PointDto>> accumulatePointsManually(@Valid @RequestBody PointAccumulateRequestDto request) {
-        log.info("accumulatePoint request: {}", request);
         return ApiResponse.ok(pointService.accumulatePoints(request, true));
     }
+
+    @PostMapping("/points/{pointId}/cancel")
+    public ResponseEntity<ApiResponse<PointDto>> cancelAccumulatePoint(@PathVariable Long pointId) {
+        return ApiResponse.ok(pointService.cancelAccumulatePoint(pointId));
+    }
+
+
 }

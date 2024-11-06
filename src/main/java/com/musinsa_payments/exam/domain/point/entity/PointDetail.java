@@ -18,11 +18,11 @@ public class PointDetail {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "point_id", nullable = false)
+    @JoinColumn(name = "origin_point_id", nullable = false)
     private Point point;
 
-    @Column(name = "target_point_id")
-    private Long targetPointId;
+    @Column(name = "detail_point_id")
+    private Long detailPointId;
 
     @Column(name = "amount", nullable = false)
     private Integer amount;
@@ -35,18 +35,18 @@ public class PointDetail {
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private PointDetail(Point point, Long targetPointId, Integer amount, PointStatus status) {
+    private PointDetail(Point point, Long detailPointId, Integer amount, PointStatus status) {
         this.point = point;
-        this.targetPointId = targetPointId;
+        this.detailPointId = detailPointId;
         this.amount = amount;
         this.status = status;
         this.createdDate = LocalDateTime.now();
     }
 
-    public static PointDetail createPointDetail(Point point, Integer amount, PointStatus status) {
+    public static PointDetail createPointDetail(Point point, Long detailPointId, Integer amount, PointStatus status) {
         return PointDetail.builder()
                 .point(point)
-                .targetPointId(point.getId())
+                .detailPointId(detailPointId)
                 .amount(amount)
                 .status(status)
                 .build();

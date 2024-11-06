@@ -39,9 +39,33 @@ public class PointService {
         pointsRepository.save(point);
 
         // PointDetail 생성 및 저장
-        PointDetail pointDetail = PointDetail.createPointDetail(point, request.amount(), pointStatus);
+        PointDetail pointDetail = PointDetail.createPointDetail(point, point.getId(), request.amount(), pointStatus);
         pointDetailRepository.save(pointDetail);
 
         return point.toDto();
+    }
+
+    @Transactional
+    public PointDto cancelAccumulatePoint(Long pointId) {
+        Point originPoint = pointsRepository.findById(pointId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 포인트가 존재하지 않습니다."));
+
+        pointValidator.validateCancelAccumulatePoint(pointId);
+
+        // 취소 포인트 생성 (amount를 마이너스로 설정)
+        Point cancelPoint = Point.createPoint(
+                originPoint.getUserId(),
+                -originPoint.getPoint(),  // 기존 적립 금액을 마이너스로 설정
+                originPoint.getOrderId(),
+                PointStatus.ACCUMULATION_CANCELLED,
+                null
+        );
+        pointsRepository.save(cancelPoint);
+
+        // 취소에 대한 PointDetail 생성 및 저장
+        PointDetail pointDetail = PointDetail.createPointDetail(cancelPoint, originPoint.getId(), -originPoint.getPoint(), PointStatus.ACCUMULATION_CANCELLED);
+        pointDetailRepository.save(pointDetail);
+
+        return cancelPoint.toDto();
     }
 }
