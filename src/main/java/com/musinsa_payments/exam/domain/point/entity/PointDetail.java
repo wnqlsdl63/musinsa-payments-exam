@@ -3,6 +3,7 @@ package com.musinsa_payments.exam.domain.point.entity;
 import com.musinsa_payments.exam.domain.point.enums.PointStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -32,5 +33,23 @@ public class PointDetail {
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private PointDetail(Point point, Long targetPointId, Integer amount, PointStatus status) {
+        this.point = point;
+        this.targetPointId = targetPointId;
+        this.amount = amount;
+        this.status = status;
+        this.createdDate = LocalDateTime.now();
+    }
+
+    public static PointDetail createPointDetail(Point point, Integer amount, PointStatus status) {
+        return PointDetail.builder()
+                .point(point)
+                .targetPointId(point.getId())
+                .amount(amount)
+                .status(status)
+                .build();
+    }
 
 }

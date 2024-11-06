@@ -20,8 +20,17 @@ public class GlobalExceptionHandler {
         FieldError fieldError = ex.getBindingResult().getFieldErrors().getFirst();
         String errorMessage = fieldError.getDefaultMessage();
 
-        log.error("Validation error: {}", errorMessage);
+        log.error("[handleMethodArgumentNotValidException] error: {}", errorMessage);
         return ApiResponse.exception(errorMessage);
+    }
+
+    /**
+     * Custom Exception(ValidationException)을 처리합니다.
+     */
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ApiResponse<String>> handleValidationException(ValidationException ex) {
+        log.error("[handleValidationException] error: {}", ex.getMessage());
+        return ApiResponse.exception(ex.getMessage());
     }
 
     /**
@@ -29,9 +38,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<String>> handleException(Exception ex) {
-        log.error("Internal server error: {}", ex.getMessage());
+        log.error("[handleException] Internal server error: {}", ex.getMessage());
         return ApiResponse.error();
     }
-
 
 }
