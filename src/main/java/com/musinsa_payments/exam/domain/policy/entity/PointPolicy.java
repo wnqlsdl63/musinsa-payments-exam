@@ -34,7 +34,7 @@ public class PointPolicy extends BaseTimeEntity {
         this.description = description;
     }
 
-    public static PointPolicy pointPolicy(PolicyUpsertRequestDto dto) {
+    public static PointPolicy createPointPolicy(PolicyUpsertRequestDto dto) {
         return PointPolicy.builder()
                 .settingKey(dto.settingKey())
                 .settingValue(dto.settingValue())
