@@ -34,7 +34,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 어플리케이션에서 잡지 못한 예외를 처리합니다.
+     * IllegalArgumentException을 처리합니다.
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("[handleIllegalArgumentException] error: {}", ex.getMessage());
+        return ApiResponse.exception(ex.getMessage());
+    }
+
+
+    /**
+     * 시스템에서 Catch 하지 못한 예외를 처리합니다.
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<String>> handleException(Exception ex) {
