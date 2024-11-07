@@ -86,7 +86,7 @@ public class PointValidator {
 
         // 현재 사용 가능한 포인트 조회
         final long availablePoint = pointsRepository.getCurrentPointsByUserId(userId);
-        log.debug("[validateSufficientPoints] availablePoints: {}", availablePoint);
+        log.debug("[validateSufficientPoints] availablePoint: {}", availablePoint);
 
         // 사용하려는 금액과 비교
         if (availablePoint < amount) {
