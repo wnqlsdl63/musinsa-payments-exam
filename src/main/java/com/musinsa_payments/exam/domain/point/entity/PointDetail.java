@@ -26,39 +26,59 @@ public class PointDetail {
     private Long detailPointId;
 
     @Column(name = "amount", nullable = false)
-    private Integer amount;
+    private Long amount;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PointStatus status;
 
+    @Column(name = "expired_date")
+    private LocalDateTime expireDate;
+
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private PointDetail(Point point, Long detailPointId, Integer amount, PointStatus status) {
+    private PointDetail(Point point, Long detailPointId, Long amount, Long userId, LocalDateTime expireDate, PointStatus status) {
         this.point = point;
         this.detailPointId = detailPointId;
         this.amount = amount;
+        this.userId = userId;
         this.status = status;
-        this.createdDate = LocalDateTime.now();
+        this.expireDate = expireDate;
     }
 
-    public static PointDetail createAccumulatePointDetail(Point point, Integer amount, PointStatus status) {
+    public static PointDetail createAccumulatePointDetail(Point point, Long amount, PointStatus status) {
         return PointDetail.builder()
                 .point(point)
                 .detailPointId(point.getId())
+                .userId(point.getUserId())
                 .amount(amount)
+                .status(status)
+                .expireDate(point.getExpireDate())
+                .build();
+    }
+
+    public static PointDetail createAccumulateCacnelPointDetail(Point point, Point originPoint, PointStatus status) {
+        return PointDetail.builder()
+                .point(point)
+                .detailPointId(originPoint.getId())
+                .userId(point.getUserId())
+                .amount(PointUtils.reverseSign(originPoint.getPoint()))
                 .status(status)
                 .build();
     }
 
-    public static PointDetail createAccumulateCacnelPointDetail(Point point, Point originPoint,PointStatus status) {
+    public static PointDetail createUsePointDetail(Point point, Long detailPointId, Long amount) {
         return PointDetail.builder()
                 .point(point)
-                .detailPointId(originPoint.getId())
-                .amount(PointUtils.reverseSign(originPoint.getPoint()))
-                .status(status)
+                .userId(point.getUserId())
+                .detailPointId(detailPointId)
+                .amount(PointUtils.reverseSign(amount))
+                .status(PointStatus.USED)
                 .build();
     }
 

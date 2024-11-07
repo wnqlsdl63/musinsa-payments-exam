@@ -12,21 +12,19 @@ import static com.musinsa_payments.exam.common.constant.PointPolicyConstant.MAX_
 
 @Component
 @RequiredArgsConstructor
-public class MaxAccumulatePointValidator implements ConstraintValidator<MaxAccumulatePoint, Integer> {
+public class MaxAccumulatePointValidator implements ConstraintValidator<MaxAccumulatePoint, Long> { // Integer -> Long
 
     private final PointPolicyRepository pointPolicyRepository;
 
-
-
     @Override
-    public boolean isValid(Integer amount, ConstraintValidatorContext context) {
+    public boolean isValid(Long amount, ConstraintValidatorContext context) { // Integer -> Long
         if (amount == null) {
             return false;
         }
 
         // DB에서 최대 적립 가능 포인트 조회
-        int maxAccumulatePoint = pointPolicyRepository.findBySettingKey(MAX_ACCUMULATE_POINT_KEY)
-                .map(policy -> Integer.parseInt(policy.getSettingValue()))
+        long maxAccumulatePoint = pointPolicyRepository.findBySettingKey(MAX_ACCUMULATE_POINT_KEY)
+                .map(policy -> Long.parseLong(policy.getSettingValue())) // Integer -> Long.parseLong
                 .orElse(DEFAULT_MAX_ACCUMULATE_POINT);
 
         // amount가 최대 적립 포인트 이하인지 검증
@@ -43,3 +41,4 @@ public class MaxAccumulatePointValidator implements ConstraintValidator<MaxAccum
         return isValid;
     }
 }
+

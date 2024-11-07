@@ -3,6 +3,7 @@ package com.musinsa_payments.exam.domain.point.entity;
 import com.musinsa_payments.exam.common.util.PointUtils;
 import com.musinsa_payments.exam.domain.point.dto.PointAccumulateRequestDto;
 import com.musinsa_payments.exam.domain.point.dto.PointDto;
+import com.musinsa_payments.exam.domain.point.dto.PointUseRequestDto;
 import com.musinsa_payments.exam.domain.point.enums.PointStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -29,7 +30,7 @@ public class Point {
     private String orderId;
 
     @Column(name = "point", nullable = false)
-    private Integer point;
+    private Long point;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -42,7 +43,7 @@ public class Point {
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Point(Long userId, Integer point, String orderId, PointStatus status, LocalDateTime expireDate) {
+    private Point(Long userId, Long point, String orderId, PointStatus status, LocalDateTime expireDate) {
         this.userId = userId;
         this.point = point;
         this.orderId = orderId;
@@ -67,6 +68,15 @@ public class Point {
                 .point(PointUtils.reverseSign(point.getPoint()))
                 .orderId(point.getOrderId())
                 .status(status)
+                .build();
+    }
+
+    public static Point createUsePoint(PointUseRequestDto dto) {
+        return Point.builder()
+                .userId(dto.userId())
+                .point(PointUtils.reverseSign(dto.amount()))
+                .orderId(dto.orderId())
+                .status(PointStatus.USED)
                 .build();
     }
 

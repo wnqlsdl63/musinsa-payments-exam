@@ -11,7 +11,7 @@ public class PointUtils {
      * @param value 부호를 반전할 값
      * @return 음수는 양수로, 양수는 음수로 반전된 값
      */
-    public static int reverseSign(int value) {
+    public static long reverseSign(long value) {
         return -value;
     }
 }

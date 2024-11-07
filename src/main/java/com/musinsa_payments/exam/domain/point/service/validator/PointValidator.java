@@ -21,7 +21,6 @@ public class PointValidator {
     private final PointDetailRepository pointDetailRepository;
 
 
-
     /**
      * 사용자의 포인트 적립 가능 여부를 검증합니다.
      *
@@ -33,7 +32,7 @@ public class PointValidator {
      * @param amount 적립하려는 포인트 금액
      * @throws ValidationException 최대 보유 가능 포인트 한도를 초과하는 경우 예외 발생
      */
-    public void validateAccumulatePoints(Long userId, int amount) {
+    public void validateAccumulatePoints(Long userId, long amount) {
         log.debug("[validateAccumulatePoints] userId: {}, amount: {}", userId, amount);
         // 사용자 최대 포인트 제한 조회
         Integer maxPointsLimit = userPointPoliciesRepository
@@ -45,9 +44,9 @@ public class PointValidator {
         int currentPoint = pointsRepository.getCurrentPointsByUserId(userId);
         log.debug("[validateAccumulatePoints] currentPoint: {}, maxPointsLimit: {}", currentPoint, maxPointsLimit);
 
-        int newTotalPoints = currentPoint + amount;
+        long newTotalPoint = currentPoint + amount;
 
-        if (newTotalPoints > maxPointsLimit) {
+        if (newTotalPoint > maxPointsLimit) {
             throw new ValidationException("최대 보유 가능한 포인트 한도를 초과할 수 없습니다.");
         }
     }
@@ -66,6 +65,26 @@ public class PointValidator {
 
         if (isPointUsed) {
             throw new ValidationException("적립된 포인트가 사용된 경우 취소할 수 없습니다.");
+        }
+    }
+
+    /**
+     * 사용자가 보유한 포인트가 사용하려는 포인트보다 충분한지 확인합니다.
+     *
+     * @param userId 포인트를 사용하려는 사용자 ID
+     * @param amount 사용하려는 포인트 금액
+     * @throws ValidationException 사용 가능한 포인트가 부족한 경우 예외 발생
+     */
+    public void validateSufficientPoints(Long userId, long amount) {
+        log.debug("[validateSufficientPoints] userId: {}, amount: {}", userId, amount);
+
+        // 현재 사용 가능한 포인트 조회
+        final long availablePoint = pointsRepository.getCurrentPointsByUserId(userId);
+        log.debug("[validateSufficientPoints] availablePoints: {}", availablePoint);
+
+        // 사용하려는 금액과 비교
+        if (availablePoint < amount) {
+            throw new ValidationException("사용 가능한 포인트가 부족합니다.");
         }
     }
 }

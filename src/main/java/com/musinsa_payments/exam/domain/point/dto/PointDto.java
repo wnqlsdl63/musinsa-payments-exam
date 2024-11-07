@@ -1,16 +1,14 @@
 package com.musinsa_payments.exam.domain.point.dto;
 
 import com.musinsa_payments.exam.domain.point.entity.Point;
-import com.musinsa_payments.exam.domain.point.enums.PointStatus;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public record PointDto(
         Long id,
         Long userId,
         String orderId,
-        Integer point,
+        Long point,
         String statusDesc,
         String expireDate,
         String createdDate

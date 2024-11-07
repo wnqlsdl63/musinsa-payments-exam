@@ -18,7 +18,7 @@ public record PointAccumulateRequestDto(
         @NotNull(message = "포인트 금액은 필수값 입니다.")
         @Min(value = 1, message = "적립하려는 포인트는 최소 1 이상이어야 합니다.")
         @MaxAccumulatePoint
-        Integer amount,
+        Long amount,
 
         String orderId,
 
