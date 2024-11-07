@@ -1,6 +1,7 @@
 package com.musinsa_payments.exam.domain.point.service.validator;
 
 import com.musinsa_payments.exam.common.exception.ValidationException;
+import com.musinsa_payments.exam.domain.point.entity.Point;
 import com.musinsa_payments.exam.domain.point.enums.PointStatus;
 import com.musinsa_payments.exam.domain.point.repository.PointDetailRepository;
 import com.musinsa_payments.exam.domain.point.repository.PointRepository;
@@ -51,21 +52,26 @@ public class PointValidator {
         }
     }
 
-
     /**
+     * 적립 취소 가능 여부를 검증합니다.
      * 특정 적립 포인트가 사용된 적이 있는지 확인하여, 사용된 적이 있다면 적립 취소할 수 없도록 검증합니다.
      *
-     * @param pointId 취소하려는 적립 포인트 ID
+     * @param point 취소하려는 포인트
      * @throws ValidationException 적립된 포인트가 사용된 경우 예외 발생
      */
-    public void validateCancelAccumulatePoint(Long pointId) {
-        log.debug("[validateCancelAccumulatePoint] pointId: {}", pointId);
+    public void validateCancelAccumulatePoint(Point point) {
+        log.debug("[validateCancelAccumulatePoint] point id: {}, point status: {}", point.getId(), point.getStatus());
 
-        boolean isPointUsed = pointDetailRepository.existsByDetailPointIdAndStatus(pointId, PointStatus.USED);
+        if (!isCancellableStatus(point.getStatus())) {
+            throw new ValidationException("사용자 적립, 수기로 적립된 포인트만 취소가 가능합니다.");
+        }
+
+        boolean isPointUsed = pointDetailRepository.existsByDetailPointIdAndStatus(point.getId(), PointStatus.USED);
 
         if (isPointUsed) {
             throw new ValidationException("적립된 포인트가 사용된 경우 취소할 수 없습니다.");
         }
+
     }
 
     /**
@@ -86,5 +92,14 @@ public class PointValidator {
         if (availablePoint < amount) {
             throw new ValidationException("사용 가능한 포인트가 부족합니다.");
         }
+    }
+
+    /**
+     * 적립 취소 가능한 상태값인지 확인합니다.
+     * @param status
+     * @return 취소 가능한 상태값인 경우 true, 그 외 false
+     */
+    private boolean isCancellableStatus(PointStatus status) {
+        return status == PointStatus.ACCUMULATED || status == PointStatus.ADMIN_ACCUMULATED;
     }
 }

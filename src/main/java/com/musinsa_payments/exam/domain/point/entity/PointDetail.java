@@ -5,6 +5,7 @@ import com.musinsa_payments.exam.domain.point.enums.PointStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class PointDetail {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PointStatus status;

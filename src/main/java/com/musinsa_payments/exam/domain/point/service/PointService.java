@@ -53,7 +53,7 @@ public class PointService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 포인트가 존재하지 않습니다."));
 
         // 포인트 적립 취소 유효성 검사
-        pointValidator.validateCancelAccumulatePoint(pointId);
+        pointValidator.validateCancelAccumulatePoint(originPoint);
 
         // 취소 포인트 생성
         Point cancelPoint = Point.createAccumlateCanclePoint(originPoint, PointStatus.ACCUMULATION_CANCELLED);
