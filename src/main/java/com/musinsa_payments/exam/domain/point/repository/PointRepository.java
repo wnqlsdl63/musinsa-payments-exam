@@ -13,7 +13,6 @@ public interface PointRepository extends JpaRepository<Point, Long> {
                 SELECT COALESCE(SUM(p.point), 0)
                 FROM Point p
                 WHERE p.userId = :userId
-                AND (p.expireDate IS NULL OR p.expireDate > CURRENT_TIMESTAMP)
             """)
     int getCurrentPointsByUserId(@Param("userId") Long userId);
 }
