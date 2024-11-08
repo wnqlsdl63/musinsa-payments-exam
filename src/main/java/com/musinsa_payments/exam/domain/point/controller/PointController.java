@@ -23,7 +23,7 @@ public class PointController {
         return ApiResponse.ok(pointService.accumulatePoint(request, false));
     }
 
-    @PostMapping("/points/{pointId}/cancel")
+    @PostMapping("/points/accumulate/{pointId}/cancel")
     public ResponseEntity<ApiResponse<PointDto>> cancelAccumulatePoint(@PathVariable Long pointId) {
         return ApiResponse.ok(pointService.cancelAccumulatePoint(pointId));
     }
