@@ -1,6 +1,7 @@
 package com.musinsa_payments.exam.domain.point.entity;
 
 import com.musinsa_payments.exam.common.util.PointUtils;
+import com.musinsa_payments.exam.domain.point.dto.AvailablePointDetailDto;
 import com.musinsa_payments.exam.domain.point.enums.PointStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -68,17 +69,19 @@ public class PointDetail {
         return PointDetail.builder()
                 .point(point)
                 .detailPointId(originPoint.getId())
+                .expireDate(originPoint.getExpireDate())
                 .userId(point.getUserId())
                 .amount(PointUtils.reverseSign(originPoint.getPoint()))
                 .status(status)
                 .build();
     }
 
-    public static PointDetail createUsePointDetail(Point point, Long detailPointId, Long amount) {
+    public static PointDetail createUsePointDetail(Point point, AvailablePointDetailDto availablePointDetail, Long amount) {
         return PointDetail.builder()
                 .point(point)
                 .userId(point.getUserId())
-                .detailPointId(detailPointId)
+                .detailPointId(availablePointDetail.detailPointId())
+                .expireDate(availablePointDetail.expireDate())
                 .amount(PointUtils.reverseSign(amount))
                 .status(PointStatus.USED)
                 .build();

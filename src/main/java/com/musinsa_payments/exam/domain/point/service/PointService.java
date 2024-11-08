@@ -1,9 +1,6 @@
 package com.musinsa_payments.exam.domain.point.service;
 
-import com.musinsa_payments.exam.domain.point.dto.AvailablePointDetailDto;
-import com.musinsa_payments.exam.domain.point.dto.PointAccumulateRequestDto;
-import com.musinsa_payments.exam.domain.point.dto.PointDto;
-import com.musinsa_payments.exam.domain.point.dto.PointUseRequestDto;
+import com.musinsa_payments.exam.domain.point.dto.*;
 import com.musinsa_payments.exam.domain.point.entity.Point;
 import com.musinsa_payments.exam.domain.point.entity.PointDetail;
 import com.musinsa_payments.exam.domain.point.enums.PointStatus;
@@ -125,7 +122,7 @@ public class PointService {
             usePointDetails.add(
                     PointDetail.createUsePointDetail(
                     usePoint,
-                    availablePoint.detailPointId(),
+                    availablePoint,
                     usableAmount
             ));
         }
@@ -134,6 +131,13 @@ public class PointService {
 
         return usePoint.toDto();
     }
+
+//    public PointDto cancelUsagePoint(Long pointId, PointUsageCancelRequestDto request) {
+//        // pointId로 PointDetail.originPointId 조회(List<PointDetail>)
+//
+//
+//        return null;
+//    }
 
     /**
      * 사용 가능한 포인트와 남은 요청 금액 중에서 실제로 사용할 수 있는 금액을 계산하여 반환합니다.
